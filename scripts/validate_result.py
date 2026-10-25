@@ -4,6 +4,11 @@ import json
 import pathlib
 import sys
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 
 REQUIRED_TOP = {"schema_version", "generated_at", "device", "asr_benchmarks", "llm_benchmarks"}
 REQUIRED_DEV = {"id", "name", "soc_or_cpu", "os", "ram_gb", "compute_units"}
