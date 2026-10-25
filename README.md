@@ -21,12 +21,12 @@ Please benchmark this machine's local AI performance across CPU, GPU, and NPU by
 2. Run `python scripts/probe_hardware.py` to detect this device's CPU model, core/thread count, supported SIMD/Matrix ISA flags (SSE4.2 / AVX2 / AVX-VNNI / AVX-512 / NEON / FP16 / I8MM / AMX / SME2), total & available RAM, GPU & VRAM capacity, and NPU availability.
 3. Memory & VRAM Safety Rule: Before running any workload, check available RAM and VRAM. Never run an LLM configuration that exceeds available physical RAM (keep >= 1.2 GB free headroom to avoid swap thrashing). On GPUs with limited VRAM (e.g. 8 GB), test 4B Q4_0 in full GPU offload, and if testing 8B/9B Q4_0, explicitly record whether VRAM overflow into shared system memory occurs (`overflow_detected: true`).
 4. Run Workload 1 (Speech-to-Text — SenseVoice Small):
-   - Measure 10-second single-window inference latency (`window_10s_ms`, input shape [1, 167, 560], 3.504 GFLOPs) and end-to-end transcription speed (`realtime_factor_x`, 6.3-min call & 49.3-min meeting equivalent) across all available hardware tiers on this machine:
-     * Tier 1: CPU Baseline (FP32 / basic SIMD)
-     * Tier 2: CPU Vector / INT8 / FP16 (ORT INT8, XNNPACK FP16, AVX2/AVX-VNNI)
-     * Tier 3: CPU Matrix ISA (AVX-512 VNNI, Apple AMX / ARM SME2)
-     * Tier 4: GPU Acceleration (CUDA, Metal/CoreML GPU, OpenVINO/Vulkan iGPU)
-     * Tier 5: Dedicated NPU (CoreML ANE, Qualcomm QNN, MediaTek Neuron, Intel AI Boost)
+   - Measure 10-second single-window inference latency (`window_10s_ms`, input shape [1, 167, 560], 3.504 GFLOPs) and end-to-end transcription speed (`realtime_factor_x`, 6.3-min call & 49.3-min meeting equivalent) across all available hardware tiers AND same-device CPU instruction set (ISA) levels on this machine:
+     * Tier 1: CPU Baseline & Basic SIMD (`Scalar / No-XNNPACK`, `SSE4.2`, `AVX1`, `Pure NEON FP32`)
+     * Tier 2: CPU Vector / INT8 / FP16 (`AVX2 + FMA3`, `AVX-VNNI`, `XNNPACK FP16`, `ARMv8.2 SDOT / I8MM`)
+     * Tier 3: CPU Matrix / 512-bit ISA (`AVX-512 + AVX512-VNNI`, `Apple AMX / CoreML CPU-only`, `ARMv9.3 SME2`)
+     * Tier 4: GPU Acceleration (`CUDA`, `Metal / CoreML GPU`, `OpenVINO / Vulkan iGPU`)
+     * Tier 5: Dedicated NPU (`CoreML ANE`, `Qualcomm QNN HTP`, `MediaTek Neuron MDLA`, `Intel AI Boost`)
    - Record power draw (W) and task energy (J) where hardware telemetry (nvidia-smi, powermetrics, RAPL, BatteryManager) is available.
 5. Run Workload 2 (Local LLM — Qwen3-4B-Instruct-2507 Q4_0, Qwen3.5-4B Q4_0, Qwen3.5-9B Q4_0):
    - Test across available CPU ISA tiers (e.g. SSE4.2 vs AVX2 vs AVX-512, or NEON vs I8MM/AMX vs SME2) and GPU/NPU backends.

@@ -50,6 +50,10 @@ SenseVoice Small (`~230M` parameters) is evaluated on two complementary metrics:
 2. **End-to-End Audio Transcription (`call_378s_s` and `meeting_2957s_s`)**:
    - Standard test durations: **6.3-minute call (`378.3 s`)** and **49.3-minute meeting (`2956.9 s`)** at `16 kHz` mono WAV (or normalized via `realtime_factor_x = audio_duration_s / process_s_excl_load` if using user-supplied recordings of similar length).
    - Includes VAD segmentation + acoustic feature extraction (Kaldi 80-dim fbank + LFR `m=7, n=6`) + model inference + CTC greedy decoding, **excluding one-time model load/compilation time** (`model_load_s` is recorded separately).
+3. **Same-Device CPU Instruction Set (ISA) Ablation for ASR**:
+   - In addition to comparing CPU vs GPU vs NPU, evaluate how much faster the **same CPU** transcribes audio as instruction set extensions are enabled:
+     - **x86-64**: Compare `SSE4.2 (128-bit)` → `AVX1 (256-bit FP)` → `AVX2 + FMA3 (256-bit FP+Int)` → `AVX-VNNI (256-bit INT8 dot-product)` → `AVX-512 + AVX512-VNNI (512-bit SIMD)` (e.g., via `ONEDNN_MAX_CPU_ISA` in OpenVINO or MLAS ISA dispatch control in ONNX Runtime).
+     - **ARM64 / Apple Silicon**: Compare `Scalar / TFLite without XNNPACK` → `ARMv8 NEON FP32` → `ARMv8.2 FP16 Vector / SDOT / I8MM INT8` → `Apple AMX / ARMv9.3 SME2 (Core ML CPU-only FP16)`.
 
 Run the single-window & E2E benchmark:
 ```bash

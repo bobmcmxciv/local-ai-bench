@@ -58,6 +58,7 @@
             "enum": [
               "T1_CPU_BASELINE",
               "T2_CPU_SIMD_INT8_FP16",
+              "T2_CPU_VECTOR_INT8",
               "T3_CPU_MATRIX_ISA",
               "T4_GPU_ACCELERATED",
               "T5_NPU_DEDICATED"
@@ -68,7 +69,7 @@
           "precision": { "type": "string", "enum": ["FP32", "FP16", "BF16", "INT8", "MIXED"] },
           "threads": { "type": ["integer", "null"] },
           "streams_or_processes": { "type": ["integer", "null"] },
-          "status": { "type": "string", "enum": ["ok", "timeout", "oom_skipped", "unsupported", "failed"] },
+          "status": { "type": "string", "enum": ["ok", "timeout", "oom_skipped", "skipped-memory-guard", "unsupported", "failed"] },
           "window_10s_ms": { "type": ["number", "null"], "description": "Median single 10s window inference latency in ms (167 LFR frames = 3.504 GFLOPs)." },
           "call_378s_s": { "type": ["number", "null"], "description": "End-to-end processing time in seconds for the 378.3s (6.3 min) call audio." },
           "meeting_2957s_s": { "type": ["number", "null"], "description": "End-to-end processing time in seconds for the 2956.9s (49.3 min) meeting audio." },
@@ -100,6 +101,7 @@
             "type": "string",
             "enum": [
               "T1_CPU_BASELINE",
+              "T2_CPU_SIMD_INT8_FP16",
               "T2_CPU_VECTOR_INT8",
               "T3_CPU_MATRIX_ISA",
               "T4_GPU_ACCELERATED",
@@ -109,7 +111,7 @@
           "route_label": { "type": "string" },
           "isa_or_backend": { "type": "string" },
           "threads": { "type": ["integer", "null"] },
-          "status": { "type": "string", "enum": ["ok", "vram_overflow_degraded", "oom_guarded", "timeout", "unsupported"] },
+          "status": { "type": "string", "enum": ["ok", "vram_overflow_degraded", "oom_guarded", "skipped-memory-guard", "timeout", "unsupported"] },
           "load_s": { "type": ["number", "null"] },
           "prompt_tokens": { "type": ["integer", "null"] },
           "gen_tokens": { "type": ["integer", "null"] },
